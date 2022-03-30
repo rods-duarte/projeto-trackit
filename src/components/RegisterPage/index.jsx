@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
@@ -7,16 +7,16 @@ import styled from "styled-components";
 import logo from "./../../Assets/img/logo.svg";
 
 export default function RegisterPage() {
-  const URL =
-    "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up";
   const navigate = useNavigate();
   const [newUser, setNewUser] = useState({});
   const [loading, setLoading] = useState(false);
-  const loadingSvg = <ThreeDots width="51px" color="#fff"/>;
+  const loadingSvg = <ThreeDots width="51px" color="#fff" />;
 
   console.log(newUser);
 
   function confirmRegister(event) {
+    const URL =
+      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up";
     event.preventDefault();
     setLoading(true);
     axios
@@ -44,30 +44,25 @@ export default function RegisterPage() {
           placeholder="senha"
           disabled={loading}
           value={newUser.password}
-          onChange={(e) => {
-            setNewUser({ ...newUser, password: e.target.value });
-            e.target.value = newUser.password;
-          }}
+          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
         />
         <input
           type="text"
           placeholder="nome"
           disabled={loading}
           value={newUser.name}
-          onChange={(e) => {
-            setNewUser({ ...newUser, name: e.target.value });
-          }}
+          onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
         />
         <input
           type="url"
           placeholder="foto"
           disabled={loading}
           value={newUser.image}
-          onChange={(e) => {
-            setNewUser({ ...newUser, image: e.target.value });
-          }}
+          onChange={(e) => setNewUser({ ...newUser, image: e.target.value })}
         />
-        <button disabled={loading} type="submit">{loading ? loadingSvg : "Cadastrar"}</button>
+        <button disabled={loading} type="submit">
+          {loading ? loadingSvg : "Cadastrar"}
+        </button>
       </form>
       <Link to="/">
         <span>Já tem uma conta? Faça login!</span>
@@ -102,7 +97,7 @@ const Register = styled.main`
     border-radius: 5px;
     margin: 5px 0;
 
-    opacity: ${props => props.loading ? .5 : 1};
+    opacity: ${(props) => (props.loading ? 0.5 : 1)};
   }
 
   span {
@@ -128,5 +123,4 @@ const Register = styled.main`
     font-size: 21px;
     color: #fff;
   }
-
 `;

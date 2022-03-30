@@ -1,27 +1,37 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+
+import UserDataContext from "../../contexts/UserDataContext";
 
 import logo from "./../../Assets/img/logo.svg";
 
 export default function LoginPage() {
   const [credentials, setCredentials] = useState({});
-  const URL =
-    "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login";
+  const { userData, setUserData } = useContext(UserDataContext);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const loadingSvg = <ThreeDots width="51px" color="#fff" />;
+
   console.log(credentials);
 
   function confirmLogin(event) {
+    const URL =
+      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login";
     event.preventDefault();
-
+    setLoading(true);
     axios
       .post(URL, credentials)
       .then((response) => {
-        //TODO ENVIAR PARA ROTA HOJE
+        setUserData(response.data);
+        navigate("/hoje");
       })
       .catch((err) => {
-        //TODO INFORMAR ERRO NO LOGIN
-        console.log("DEU RUIM!!!");
+        //TODO INFORMAR QUAL O ERRO PRO USUARIO...
+        alert("DEU RUIM !!!");
+        setLoading(false);
       });
   }
 
@@ -32,18 +42,24 @@ export default function LoginPage() {
         <input
           type="email"
           placeholder="email"
-          onChange={(e) => {
-            setCredentials({ ...credentials, email: e.target.value });
-          }}
+          disabled={loading}
+          value={credentials.email}
+          onChange={(e) =>
+            setCredentials({ ...credentials, email: e.target.value })
+          }
         />
         <input
           type="password"
           placeholder="password"
-          onChange={(e) => {
-            setCredentials({ ...credentials, password: e.target.value });
-          }}
+          disabled={loading}
+          value={credentials.password}
+          onChange={(e) =>
+            setCredentials({ ...credentials, password: e.target.value })
+          }
         />
-        <button type="submit">Entrar</button>
+        <button disabled={loading} type="submit">
+          {loading ? loadingSvg : "Entrar"}
+        </button>
       </form>
       <Link to="/cadastro">
         <span>Não tem uma conta? Cadastre-se!</span>
@@ -76,6 +92,7 @@ const Login = styled.main`
     border: 1px solid #d5d5d5;
     border-radius: 5px;
     margin: 5px 0;
+    opacity: ${(props) => (props.loading ? 0.5 : 1)};
   }
 
   span {
@@ -93,9 +110,11 @@ const Login = styled.main`
     margin-top: 5px;
     margin-bottom: 20px;
     border: none;
-
     background-color: #52b6ff;
     border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     font-size: 21px;
     color: #fff;
