@@ -10,7 +10,7 @@ import TodayPage from "./../TodayPage/";
 import HistoricsPage from "./../HistoricPage/";
 
 export default function App() {
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState(null);
   return (
     <BrowserRouter>
       <UserDataContext.Provider value={{ userData, setUserData }}>

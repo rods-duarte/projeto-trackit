@@ -10,12 +10,11 @@ import logo from "./../../Assets/img/logo.svg";
 
 export default function LoginPage() {
   const [credentials, setCredentials] = useState({});
-  const { userData, setUserData } = useContext(UserDataContext);
+  const { setUserData } = useContext(UserDataContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const loadingSvg = <ThreeDots width="51px" color="#fff" />;
 
-  console.log(credentials);
 
   function confirmLogin(event) {
     const URL =
@@ -26,6 +25,7 @@ export default function LoginPage() {
       .post(URL, credentials)
       .then((response) => {
         setUserData(response.data);
+        localStorage.setItem("userData", JSON.stringify(response.data))
         navigate("/hoje");
       })
       .catch((err) => {
