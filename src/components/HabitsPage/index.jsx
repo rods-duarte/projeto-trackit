@@ -160,7 +160,7 @@ export default function HabitsPage() {
     }
   }
 
-  function confirmNewHabit(e) { //! working
+  function confirmNewHabit(e) { 
     const URL =
       "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
 
@@ -189,6 +189,11 @@ export default function HabitsPage() {
       setHabits([...habits, response.data]);
       setNewHabit(null);
       setLoading(false);
+    })
+    .catch(err => {
+      console.log(err.response);
+      alert("Insira um nome !");
+      setLoading(false);
     });
   }
 
@@ -214,7 +219,7 @@ const Habits = styled.main`
   margin-bottom: 80px;
 
   .top {
-    margin-top: 30px;
+    margin-top: 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;

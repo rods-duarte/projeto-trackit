@@ -25,51 +25,54 @@ export default function TodayHabit({ habit }) {
         Authorization: `Bearer ${userData.token}`,
       },
     };
+    updateCount();
+    updateStreak();
+    setIsDone(!isDone);
 
-    if (isDone) { //TODO E interresante separar em funcoes
-      //Atualiza o progressBar
+    axios
+      .post(URL, undefined, config)
+      .then(() => {})
+      .catch((err) => console.log(err.response));
+  }
+
+  function updateCount() {
+    if (isDone) {
       setCount({
         ...count,
         done: count.done.filter((habit) => habit.id !== id),
       });
+    } else {
+      setCount({ ...count, done: [...count.done, habit] });
+    }
+  }
 
-      // contador
+  function updateStreak() {
+    if (isDone) {
       if (streak.current === streak.record) {
         setStreak({ current: streak.current - 1, record: streak.record - 1 });
       } else {
         setStreak({ ...streak, current: streak.current - 1 });
       }
     } else {
-      //Atualiza o progressBar
-      setCount({ ...count, done: [...count.done, habit] });
-
-      // contador
       if (streak.current === streak.record) {
         setStreak({ current: streak.current + 1, record: streak.record + 1 });
       } else {
         setStreak({ ...streak, current: streak.current + 1 });
       }
     }
-    
-    setIsDone(!isDone);
-
-    axios
-      .post(URL, undefined, config)
-      .then(() => {
-      })
-      .catch((err) => console.log(err.response));
   }
 
   function getStreak() {
-    var isRecord = isDone && streak.current !== 0 && streak.current === streak.record
+    var isRecord =
+      isDone && streak.current !== 0 && streak.current === streak.record;
 
     const current = (
-      <CurrentStreak isDone={isDone}>
-        {streak.current} dias
-      </CurrentStreak>
+      <CurrentStreak isDone={isDone}>{streak.current} dias</CurrentStreak>
     );
     const record = (
-      <RecordStreak isRecord={isRecord} className="sequencia-recorde">{streak.record} dias</RecordStreak>
+      <RecordStreak isRecord={isRecord} className="sequencia-recorde">
+        {streak.record} dias
+      </RecordStreak>
     );
 
     return (
@@ -152,5 +155,4 @@ const CurrentStreak = styled.span`
 
 const RecordStreak = styled.span`
   color: ${(props) => (props.isRecord ? "#8EC648" : "#666")} !important;
-`
-
+`;
