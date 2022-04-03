@@ -10,9 +10,8 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [newUser, setNewUser] = useState({});
   const [loading, setLoading] = useState(false);
-  const loadingSvg = <ThreeDots width="51px" color="#fff" />;
 
-  console.log(newUser);
+  const loadingSvg = <ThreeDots width="51px" color="#fff" />;
 
   function confirmRegister(event) {
     const URL =
@@ -24,6 +23,7 @@ export default function RegisterPage() {
       .then(() => navigate("/"))
       .catch((err) => {
         setLoading(false);
+        //TODO informar qual o erro
         alert("DEU RUIM !");
       });
   }
@@ -74,8 +74,9 @@ export default function RegisterPage() {
 const Register = styled.main`
   width: 100%;
   min-height: 100vh;
-  margin-top: 40px;
+  padding-top: 40px;
   padding-bottom: 20px;
+  background-color: #fff;
 
   img {
     display: block;
@@ -96,6 +97,7 @@ const Register = styled.main`
     border: 1px solid #d5d5d5;
     border-radius: 5px;
     margin: 5px 0;
+    padding-left: 5px;
 
     opacity: ${(props) => (props.loading ? 0.5 : 1)};
   }

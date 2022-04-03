@@ -1,17 +1,25 @@
 import axios from "axios";
 import { useState, useContext } from "react";
+import dayjs from "dayjs";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
 import UserDataContext from "./../../contexts/UserDataContext";
+import CountContext from "./../../contexts/CountContext";
 
 import deleteIcon from "./../../Assets/img/delete-icon.svg";
 
 export default function Habit({ id, name, days, updateHabits }) {
   const { userData } = useContext(UserDataContext);
+  const { count, setCount } = useContext(CountContext);
   const [deleteHabit, setDeleteHabit] = useState(false);
   const [loading, setLoading] = useState(false);
   const loadingSvg = <ThreeDots width="51px" color="#fff" />;
+
+  //dayjs
+  var isToday = require('dayjs/plugin/isToday');
+  dayjs.extend(isToday);
+
 
   function confirmDelete(id) {
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`;
@@ -22,15 +30,24 @@ export default function Habit({ id, name, days, updateHabits }) {
     };
     setLoading(true);
 
-    axios.delete(URL, config)
-    .then(() => {
-      setLoading(false);
-      updateHabits(id);
-    })
-    .catch(err => {
-      console.log(err.response);
-      setLoading(false);
-    })
+
+    for(let day of days) {
+      if(dayjs().day(day).isToday()) { // checa se o habito deletado e de hoje, se sim atualiza o progressbar
+        setCount({done: count.done.filter(habit => habit.id !== id), total: count.total - 1})
+      }
+    }
+
+    axios
+      .delete(URL, config)
+      .then(() => {
+        console.log("entro aqui");
+        setLoading(false);
+        updateHabits(id);
+      })
+      .catch((err) => {
+        console.log(err.response);
+        setLoading(false);
+      });
   }
 
   return (
@@ -38,8 +55,12 @@ export default function Habit({ id, name, days, updateHabits }) {
       <ConfirmDelete deleteHabit={deleteHabit}>
         <h2>Deletar habito ?</h2>
         <div className="buttons">
-          <button disabled={loading} onClick={() => setDeleteHabit(false)}>Cancelar</button>
-          <button disabled={loading} onClick={() => confirmDelete(id)}>{loading ? loadingSvg : "Confirmar"}</button>
+          <button disabled={loading} onClick={() => setDeleteHabit(false)}>
+            Cancelar
+          </button>
+          <button disabled={loading} onClick={() => confirmDelete(id)}>
+            {loading ? loadingSvg : "Confirmar"}
+          </button>
         </div>
       </ConfirmDelete>
       <h2>{name}</h2>
@@ -49,13 +70,13 @@ export default function Habit({ id, name, days, updateHabits }) {
         onClick={() => setDeleteHabit(true)}
       />
       <div className="days">
-        <div className={days.includes(1) ? "selected" : undefined}>D</div>
-        <div className={days.includes(2) ? "selected" : undefined}>S</div>
-        <div className={days.includes(3) ? "selected" : undefined}>T</div>
+        <div className={days.includes(0) ? "selected" : undefined}>D</div>
+        <div className={days.includes(1) ? "selected" : undefined}>S</div>
+        <div className={days.includes(2) ? "selected" : undefined}>T</div>
+        <div className={days.includes(3) ? "selected" : undefined}>Q</div>
         <div className={days.includes(4) ? "selected" : undefined}>Q</div>
-        <div className={days.includes(5) ? "selected" : undefined}>Q</div>
+        <div className={days.includes(5) ? "selected" : undefined}>S</div>
         <div className={days.includes(6) ? "selected" : undefined}>S</div>
-        <div className={days.includes(7) ? "selected" : undefined}>S</div>
       </div>
     </HabitContainer>
   );
@@ -137,6 +158,7 @@ const ConfirmDelete = styled.div`
     width: 84px;
     height: 34px;
     font-size: 16px;
+    margin: 0;
   }
 
   .buttons button:first-child {

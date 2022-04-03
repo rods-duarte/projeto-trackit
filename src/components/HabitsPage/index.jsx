@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
+import dayjs from "dayjs";
 import styled from "styled-components";
 import { RotatingLines } from "react-loader-spinner";
 
 import UserDataContext from "./../../contexts/UserDataContext";
+import CountContext from "../../contexts/CountContext";
 
 import Header from "./../Header/";
 import Menu from "./../Menu/";
@@ -11,9 +13,20 @@ import Habit from "./../Habit/";
 
 export default function HabitsPage() {
   //TODO Adicionar animacao de loading quando habito e criado
-  const { userData, setUserData } = useContext(UserDataContext); //dados globais
+  const { userData, setUserData } = useContext(UserDataContext);
+  const {count, setCount } = useContext(CountContext);
   const [habits, setHabits] = useState(null);
   const [newHabit, setNewHabit] = useState(null);
+
+  //dayjs
+  var isToday = require('dayjs/plugin/isToday');
+  dayjs.extend(isToday);
+
+  const loadingListSvg = (
+    <div className="loading-container">
+      <RotatingLines width="100px" strokeColor="#126BA5"></RotatingLines>
+    </div>
+  );
   let config;
 
   useEffect(() => {
@@ -35,11 +48,7 @@ export default function HabitsPage() {
 
   function buildHabitsList() {
     if (habits === null) {
-      return (
-        <div className="loading-container">
-          <RotatingLines width="100px" strokeColor="#126BA5"></RotatingLines>
-        </div>
-      );
+      return loadingListSvg;
     }
     if (habits.length === 0) {
       return (
@@ -51,7 +60,6 @@ export default function HabitsPage() {
     }
 
     return habits.map((habit) => {
-      //TODO SOLUCIONAR
       const { id, name, days } = habit;
       return (
         <Habit
@@ -81,24 +89,31 @@ export default function HabitsPage() {
           <div className="days">
             <div
               onClick={(e) => {
-                selectDay(e, 1);
+                selectDay(e, 0);
               }}
             >
               D
             </div>
             <div
               onClick={(e) => {
-                selectDay(e, 2);
+                selectDay(e, 1);
               }}
             >
               S
             </div>
             <div
               onClick={(e) => {
-                selectDay(e, 3);
+                selectDay(e, 2);
               }}
             >
               T
+            </div>
+            <div
+              onClick={(e) => {
+                selectDay(e, 3);
+              }}
+            >
+              Q
             </div>
             <div
               onClick={(e) => {
@@ -112,18 +127,11 @@ export default function HabitsPage() {
                 selectDay(e, 5);
               }}
             >
-              Q
-            </div>
-            <div
-              onClick={(e) => {
-                selectDay(e, 6);
-              }}
-            >
               S
             </div>
             <div
               onClick={(e) => {
-                selectDay(e, 7);
+                selectDay(e, 6);
               }}
             >
               S
@@ -159,10 +167,15 @@ export default function HabitsPage() {
       },
     };
 
+    for(let day of newHabit.days) {
+      if(dayjs().day(day).isToday()) { // checa se o habito deletado e de hoje, se sim atualiza o progressbar
+        setCount({...count, total: count.total + 1})
+      }
+    }
+
     axios.post(URL, newHabit, config).then((response) => {
       setHabits([...habits, response.data]);
       setNewHabit(null);
-      console.log("ENVIOU O NOVO HABITO");
     });
   }
 
@@ -185,7 +198,7 @@ export default function HabitsPage() {
 const Habits = styled.main`
   min-height: 100vh;
   background-color: #e5e5e5;
-  padding-bottom: 100px;
+  margin-bottom: 80px;
 
   .top {
     margin-top: 30px;
@@ -227,6 +240,12 @@ const Habits = styled.main`
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 150px;
+    margin-left: auto;
+    margin-right: auto;
   }
 `;
 

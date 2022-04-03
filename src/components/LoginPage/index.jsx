@@ -13,8 +13,8 @@ export default function LoginPage() {
   const { setUserData } = useContext(UserDataContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const loadingSvg = <ThreeDots width="51px" color="#fff" />;
 
+  const loadingSvg = <ThreeDots width="51px" color="#fff" />;
 
   function confirmLogin(event) {
     const URL =
@@ -71,7 +71,8 @@ export default function LoginPage() {
 const Login = styled.main`
   width: 100%;
   min-height: 100vh;
-  margin-top: 40px;
+  padding-top: 40px;
+  background-color: #fff;
 
   img {
     display: block;
@@ -92,6 +93,7 @@ const Login = styled.main`
     border: 1px solid #d5d5d5;
     border-radius: 5px;
     margin: 5px 0;
+    padding-left: 5px;
     opacity: ${(props) => (props.loading ? 0.5 : 1)};
   }
 
