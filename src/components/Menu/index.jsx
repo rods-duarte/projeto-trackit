@@ -7,7 +7,6 @@ import CountContext from "./../../contexts/CountContext";
 
 import "react-circular-progressbar/dist/styles.css";
 
-//TODO Receber o valor em % dos habitos concluidos
 export default function Menu() {
   const { count } = useContext(CountContext);
   const {done, total} = count;

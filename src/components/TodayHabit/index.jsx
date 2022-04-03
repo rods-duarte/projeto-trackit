@@ -7,7 +7,7 @@ import CountContext from "../../contexts/CountContext";
 
 import checkSvg from "./../../Assets/img/check.svg";
 
-export default function TodayHabit({ habit, todayHabits }) {
+export default function TodayHabit({ habit }) {
   const { id, name, done, currentSequence, highestSequence } = habit;
   const { userData } = useContext(UserDataContext);
   const { count, setCount } = useContext(CountContext);
@@ -50,7 +50,7 @@ export default function TodayHabit({ habit, todayHabits }) {
         setStreak({ ...streak, current: streak.current + 1 });
       }
     }
-
+    
     setIsDone(!isDone);
 
     axios
@@ -61,7 +61,7 @@ export default function TodayHabit({ habit, todayHabits }) {
   }
 
   function getStreak() {
-    const isRecord = streak.current !== 0 && streak.current === streak.record
+    var isRecord = isDone && streak.current !== 0 && streak.current === streak.record
 
     const current = (
       <CurrentStreak isDone={isDone}>

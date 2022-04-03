@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import dayjs from "dayjs";
 import styled from "styled-components";
-import { RotatingLines } from "react-loader-spinner";
+import { RotatingLines, ThreeDots } from "react-loader-spinner";
 
 import UserDataContext from "./../../contexts/UserDataContext";
 import CountContext from "../../contexts/CountContext";
@@ -12,11 +12,11 @@ import Menu from "./../Menu/";
 import Habit from "./../Habit/";
 
 export default function HabitsPage() {
-  //TODO Adicionar animacao de loading quando habito e criado
   const { userData, setUserData } = useContext(UserDataContext);
   const {count, setCount } = useContext(CountContext);
   const [habits, setHabits] = useState(null);
   const [newHabit, setNewHabit] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   //dayjs
   var isToday = require('dayjs/plugin/isToday');
@@ -27,6 +27,9 @@ export default function HabitsPage() {
       <RotatingLines width="100px" strokeColor="#126BA5"></RotatingLines>
     </div>
   );
+
+  const loadingSvg = <ThreeDots width="51px" color="#fff" />;
+
   let config;
 
   useEffect(() => {
@@ -82,55 +85,56 @@ export default function HabitsPage() {
           <input
             type="text"
             placeholder="nome do habito"
+            disabled={loading}
             onChange={(e) => {
               setNewHabit({ ...newHabit, name: e.target.value });
             }}
           />
           <div className="days">
             <div
-              onClick={(e) => {
+              onClick={loading ? undefined : (e) => {
                 selectDay(e, 0);
               }}
             >
               D
             </div>
             <div
-              onClick={(e) => {
+              onClick={loading ? undefined : (e) => {
                 selectDay(e, 1);
               }}
             >
               S
             </div>
             <div
-              onClick={(e) => {
+              onClick={loading ? undefined : (e) => {
                 selectDay(e, 2);
               }}
             >
               T
             </div>
             <div
-              onClick={(e) => {
+              onClick={loading ? undefined : (e) => {
                 selectDay(e, 3);
               }}
             >
               Q
             </div>
             <div
-              onClick={(e) => {
+              onClick={loading ? undefined : (e) => {
                 selectDay(e, 4);
               }}
             >
               Q
             </div>
             <div
-              onClick={(e) => {
+              onClick={loading ? undefined : (e) => {
                 selectDay(e, 5);
               }}
             >
               S
             </div>
             <div
-              onClick={(e) => {
+              onClick={loading ? undefined : (e) => {
                 selectDay(e, 6);
               }}
             >
@@ -139,7 +143,7 @@ export default function HabitsPage() {
           </div>
           <div className="buttons">
             <button onClick={() => setNewHabit(null)}>Cancelar</button>
-            <button type="submit">Salvar</button>
+            <button type="submit">{loading ? loadingSvg : "Salvar"}</button>
           </div>
         </form>
       </NewHabit>
@@ -156,7 +160,7 @@ export default function HabitsPage() {
     }
   }
 
-  function confirmNewHabit(e) {
+  function confirmNewHabit(e) { //! working
     const URL =
       "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
 
@@ -167,15 +171,24 @@ export default function HabitsPage() {
       },
     };
 
+    if(newHabit.days.length === 0) {
+      alert("Selecione um dia !");
+      return;
+    }
+
+    setLoading(true);
+
     for(let day of newHabit.days) {
       if(dayjs().day(day).isToday()) { // checa se o habito deletado e de hoje, se sim atualiza o progressbar
         setCount({...count, total: count.total + 1})
       }
     }
 
-    axios.post(URL, newHabit, config).then((response) => {
+    axios.post(URL, newHabit, config)
+    .then((response) => {
       setHabits([...habits, response.data]);
       setNewHabit(null);
+      setLoading(false);
     });
   }
 
@@ -254,6 +267,7 @@ const NewHabit = styled.div`
     width: 340px;
     height: 45px;
     margin: 0 auto;
+    padding-left: 5px;
 
     background-color: #fff;
     border: 1px solid #d5d5d5;
@@ -303,6 +317,10 @@ const NewHabit = styled.div`
     width: 84px;
     height: 34px;
     font-size: 16px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .buttons button:first-child {

@@ -10,8 +10,9 @@ import TodayHabit from "./../TodayHabit/";
 import UserDataContext from "./../../contexts/UserDataContext";
 import CountContext from "../../contexts/CountContext";
 
+//TODO bug onde o record aparece em verde quando abre o app 
 export default function TodayPage() {
-  const { userData, setUserData } = useContext(UserDataContext);
+  const { userData } = useContext(UserDataContext);
   const { count, setCount } = useContext(CountContext);
   const [todayHabits, setTodayHabits] = useState(null);
 
@@ -51,7 +52,6 @@ export default function TodayPage() {
       .then((response) => {
         setTodayHabits(response.data);
         setCount({
-          //TODO TALVEZ SO habit.done sirva
           done: response.data.filter((habit) => habit.done),
           total: response.data.length,
         });
