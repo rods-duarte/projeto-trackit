@@ -9,7 +9,7 @@ import LoginPage from "./../LoginPage/";
 import RegisterPage from "./../RegisterPage/";
 import HabitsPage from "./../HabitsPage/";
 import TodayPage from "./../TodayPage/";
-import HistoricPage from "./../HistoricPage/";
+import HistoryPage from "./../HistoryPage/";
 
 export default function App() {
   const [userData, setUserData] = useState(null);
@@ -26,7 +26,7 @@ export default function App() {
                 <Route path="/cadastro" element={<RegisterPage />} />
                 <Route path="/habitos" element={<HabitsPage />} />
                 <Route path="/hoje" element={<TodayPage />} />
-                <Route path="/historico" element={<HistoricPage />} />
+                <Route path="/historico" element={<HistoryPage />} />
               </Routes>
             </CountContext.Provider>
           </TodayHabitsContext.Provider>

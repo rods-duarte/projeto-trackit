@@ -161,10 +161,9 @@ export default function HabitsPage() {
   }
 
   function confirmNewHabit(e) { 
+    e.preventDefault();
     const URL =
       "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
-
-    e.preventDefault();
     config = {
       headers: {
         Authorization: `Bearer ${userData.token}`,
@@ -175,20 +174,19 @@ export default function HabitsPage() {
       alert("Selecione um dia !");
       return;
     }
-
     setLoading(true);
-
-    for(let day of newHabit.days) {
-      if(dayjs().day(day).isToday()) { // checa se o habito deletado e de hoje, se sim atualiza o progressbar
-        setCount({...count, total: count.total + 1})
-      }
-    }
 
     axios.post(URL, newHabit, config)
     .then((response) => {
       setHabits([...habits, response.data]);
       setNewHabit(null);
       setLoading(false);
+
+      for(let day of newHabit.days) {
+        if(dayjs().day(day).isToday()) { // checa se o habito deletado e de hoje, se sim atualiza o progressbar
+          setCount({...count, total: count.total + 1})
+        }
+      }
     })
     .catch(err => {
       console.log(err.response);

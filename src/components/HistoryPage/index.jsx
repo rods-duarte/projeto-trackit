@@ -1,20 +1,20 @@
 import styled from "styled-components";
 
-import Header from "./../Header/";
-import Menu from "./../Menu/";
+import Header from "../Header";
+import Menu from "../Menu";
 
-export default function HistoricPage() {
+export default function HistoryPage() {
     return (
-        <Historic>
+        <History>
             <Header />
             <h1>Historico</h1>
             <p>Em breve você poderá ver o histórico dos seus hábitos aqui!</p>
             <Menu />
-        </Historic>
+        </History>
     );
 }
 
-const Historic = styled.main`
+const History = styled.main`
     min-height: 100vh;
     background-color: #e5e5e5;
     margin-bottom: 80px;

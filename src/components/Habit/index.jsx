@@ -30,19 +30,17 @@ export default function Habit({ id, name, days, updateHabits }) {
     };
     setLoading(true);
 
-
-    for(let day of days) {
-      if(dayjs().day(day).isToday()) { // checa se o habito deletado e de hoje, se sim atualiza o progressbar
-        setCount({done: count.done.filter(habit => habit.id !== id), total: count.total - 1})
-      }
-    }
-
     axios
       .delete(URL, config)
       .then(() => {
         console.log("entro aqui");
         setLoading(false);
         updateHabits(id);
+        for(let day of days) {
+          if(dayjs().day(day).isToday()) { // checa se o habito deletado e de hoje, se sim atualiza o progressbar
+            setCount({done: count.done.filter(habit => habit.id !== id), total: count.total - 1})
+          }
+        }    
       })
       .catch((err) => {
         console.log(err.response);
